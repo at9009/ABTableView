@@ -65,7 +65,7 @@
 			return header;
 		}
 	}
-	
+	 
 	UITableViewCell *tc = [delegate tableView:self headerCellAtTableColumn:column];
 	ABTableViewCell *cell = [[ABTableViewCell alloc] initWithUITableViewCell:tc tapDelegate:self];
 	cell.reuseIdentifier = [tc reuseIdentifier];
@@ -137,48 +137,62 @@
 	CGFloat offsetY = self.contentOffset.y;
 	CGFloat width = self.frame.size.width;
 	CGFloat height = self.frame.size.height;
+	
 	int columns;
 	int rows;
 	int columnWidth;
 	int rowHeight;
+	int startX = -1;
+	int startY = -1;
 		
 	columns = [delegate numberOfColumnsInTableView:self];
 	rows = [delegate numberOfRowsInTableView:self];
 	headerHeight = [delegate heightOfHeaderRowInTableView:self];
 	
+	// determine what columns to show. Keep track of all column widths for scroll area
 	for (int index = 0; index < columns; index++) {
 		columnWidth = [delegate tableView:self widthOfColumn:index];
 		if (collectiveX >= offsetX-(columnWidth*2) && collectiveX <= (offsetX + width+columnWidth*2)) {
 			[columnsToShow addObject: [[NSNumber alloc] initWithInt:index]];
+			if (startX == -1) {
+				startX = collectiveX;
+			}
 		}
 		collectiveX += columnWidth;
 	}
 		
+	// determine what rows to show. Keep track of all row heights for scroll area
 	for (int index = 0; index < rows; index++) {
 		rowHeight = [delegate tableView:self heightOfRow:index];
 		if (collectiveY >= offsetY-(rowHeight*4) && collectiveY <= (offsetY + height+rowHeight*4)) {
 			[rowsToShow addObject: [[NSNumber alloc] initWithInt:index]];
+			if (startY == -1) {
+				startY = collectiveY;
+			}
 		}
 		collectiveY += rowHeight;
 	}
 		
 	[self setContentSize:CGSizeMake(collectiveX,collectiveY+headerHeight)];
 	
-	collectiveX = 0;
+	collectiveX = startX;
 	ABTableViewCell *cell;
 	NSMutableArray *addedCells = [[NSMutableArray alloc] init];
 	for (NSNumber *column in columnsToShow) {
 		// header
-		columnWidth = [delegate tableView:self widthOfColumn:[column intValue]];
+		int currentColumn = [column intValue];
+		columnWidth = [delegate tableView:self widthOfColumn:currentColumn];
 		CGRect rect = CGRectMake(collectiveX, 0, columnWidth, [delegate heightOfHeaderRowInTableView:self]);
-		cell = [self getColumnHeader:[column intValue]];
+		cell = [self getColumnHeader:currentColumn];
 		[cell setFrame:rect];
 		[self insertSubview:cell.tableViewCell.contentView atIndex:0];		
 		[self insertSubview:cell.tableViewCell.backgroundView atIndex:0];
-		[visibleColumnHeaders addObject:cell];
+		if(![visibleColumnHeaders containsObject:cell])
+			[visibleColumnHeaders addObject:cell];
+		
 		[addedCells addObject:cell];
 		
-		collectiveY = headerHeight;
+		collectiveY = startY;
 		for (NSNumber *row in rowsToShow) {
 			rowHeight = [delegate tableView:self heightOfRow:[row intValue]];
 			// data cells
@@ -190,7 +204,9 @@
 				[self insertSubview:cell.selectionView atIndex:0];
 			}
 			[self insertSubview:cell.tableViewCell.backgroundView atIndex:0];
-			[visibleDataCells addObject:cell];
+			if(![visibleDataCells containsObject:cell])
+				[visibleDataCells addObject:cell];
+			
 			[addedCells addObject:cell];
 			collectiveY += rowHeight;
 		}
@@ -198,6 +214,7 @@
 		collectiveX += columnWidth;
 	}
 	
+	// remove header cells that have been scrolled off
 	NSMutableArray* toRemove = [[NSMutableArray alloc] init];
 	for (ABTableViewCell *cell in visibleColumnHeaders) {
 		if (![addedCells containsObject:cell]) {
@@ -211,6 +228,7 @@
 	}
 	[toRemove removeAllObjects];
 	
+	// remove data cells that have been scrolled off
 	for (ABTableViewCell *cell in visibleDataCells) {
 		if (![addedCells containsObject:cell]) {
 			[toRemove addObject:cell];

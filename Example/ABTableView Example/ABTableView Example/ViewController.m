@@ -52,6 +52,39 @@
 	[categories addObject:@"Taxes"];
 	[categories addObject:@"Tithing/Charity"];
 	[categories addObject:@"Utilities"];
+	[categories addObject:@"U2"];
+	[categories addObject:@"U3"];
+	[categories addObject:@"U4"];
+	[categories addObject:@"U5"];
+	[categories addObject:@"U6"];
+	[categories addObject:@"U7"];
+	[categories addObject:@"U8"];
+	[categories addObject:@"U9"];
+	[categories addObject:@"U10"];
+	[categories addObject:@"U11"];
+	[categories addObject:@"U12"];
+	[categories addObject:@"U13"];
+	[categories addObject:@"U14"];
+	[categories addObject:@"U15"];
+	[categories addObject:@"U16"];
+	[categories addObject:@"U17"];
+	[categories addObject:@"U18"];
+	[categories addObject:@"U19"];
+	[categories addObject:@"U20"];
+	[categories addObject:@"U21"];
+	[categories addObject:@"U22"];
+	[categories addObject:@"U23"];
+	[categories addObject:@"U24"];
+	[categories addObject:@"U25"];
+	[categories addObject:@"U26"];
+	[categories addObject:@"U27"];
+	[categories addObject:@"U28"];
+	[categories addObject:@"U29"];
+	[categories addObject:@"U30"];
+	[categories addObject:@"U31"];
+	[categories addObject:@"U32"];
+	[categories addObject:@"U33"];
+	[categories addObject:@"U34"];
 	[categories addObject:@"Total"];
 	
 	[monthNames addObject:@"Jan 2009"];
@@ -180,6 +213,7 @@
 		
 		UILabel *amountLabel = (UILabel*) [cell viewWithTag:1]; 
 		
+		
 		NSNumber *amountObject = [summary.amounts getAmountAtColumn:column-1 row:row];
 		if ([amountObject doubleValue] == 0) {
 			amountLabel.text = @"";
@@ -215,7 +249,7 @@
 	return cell;
 }
 
--(UITableViewCell *)tableView:(ABTableView *)tableView headerCellAtTableColumn: (NSInteger) column {
+-(UITableViewCell *)tableView:(ABTableView *)tableView headerCellAtTableColumn: (NSInteger) column{
 	NSString *cellIdentifier = @"HeaderCell";
 	UITableViewCell *cell;
 	

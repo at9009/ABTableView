@@ -35,15 +35,15 @@
 	NSMutableArray				*visibleColumnHeaders;
 	NSMutableArray				*visibleDataCells;
 
-	NSMutableDictionary			*enqueuedCells;
+	NSMutableDictionary		*enqueuedCells;
 	
-	NSMutableArray 				*columnsToShow;
+	NSMutableArray 			*columnsToShow;
 	NSMutableArray				*rowsToShow;
-	id<ABTableViewDelegate>		delegate;
+	id<ABTableViewDelegate>	delegate;
 	
 	NSInteger					maxEnqueued;
-	BOOL						freezeHeaders;
-	BOOL						freezeLeftColumn;
+	BOOL							freezeHeaders;
+	BOOL							freezeLeftColumn;
 }
 
 @property (assign) BOOL freezeHeaders;
